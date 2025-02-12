@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 type TicketFormProps = {
   onSubmit: (data: { name: string; email: string; avatar: string }) => void;
@@ -70,7 +71,7 @@ export default function Form({ onSubmit }: TicketFormProps) {
 
       {/* Avatar Upload */}
       <input type="file" accept="image/*" onChange={handleImageUpload} className="border p-2 rounded" />
-      {loading ? <p>Uploading...</p> : avatar && <img src={avatar} alt="Avatar Preview" className="w-24 h-24 rounded-full mt-2" />}
+      {loading ? <p>Uploading...</p> : avatar && <Image src={avatar} alt="Avatar Preview" className="w-24 h-24 rounded-full mt-2" />}
 
       <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
         Generate Ticket

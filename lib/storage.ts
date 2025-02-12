@@ -1,14 +1,33 @@
-export const saveToLocalStorage = (data: any) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("ticketData", JSON.stringify(data));
+export const saveToStorage = <T>(key: string, value: T): void => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+    } catch (error) {
+      console.error("Error saving to storage:", error);
     }
   };
   
-  export const loadFromLocalStorage = () => {
-    if (typeof window !== "undefined") {
-      const data = localStorage.getItem("ticketData");
-      return data ? JSON.parse(data) : null;
+  export const getFromStorage = <T>(key: string): T | null => {
+    try {
+      if (typeof window !== "undefined") {
+        const item = localStorage.getItem(key);
+        return item ? (JSON.parse(item) as T) : null;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error retrieving from storage:", error);
+      return null;
     }
-    return null;
+  };
+  
+  export const removeFromStorage = (key: string): void => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(key);
+      }
+    } catch (error) {
+      console.error("Error removing from storage:", error);
+    }
   };
   
