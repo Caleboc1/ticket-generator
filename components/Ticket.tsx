@@ -14,6 +14,7 @@ export default function Ticket({ name, email, avatar }: { name: string; email: s
   className="rounded-full mt-2 mx-auto"
 />
 
+
           <figcaption className="sr-only">User's uploaded avatar</figcaption>
         </figure>
       </div>
