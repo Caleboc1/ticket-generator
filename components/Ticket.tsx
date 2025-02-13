@@ -6,17 +6,16 @@ export default function Ticket({ name, email, avatar }: { name: string; email: s
         <h2 className="text-xl font-bold" aria-label={`Ticket for ${name}`}>{name}</h2>
         <p className="text-gray-600" aria-label={`Email: ${email}`}>{email}</p>
         <figure>
-        <Image 
-  src={avatar} 
-  alt={`${name}&apos;s avatar`} 
-  width={96} 
-  height={96} 
-  className="rounded-full mt-2 mx-auto"
-/>
-
-
-          <figcaption className="sr-only">User's uploaded avatar</figcaption>
+          <Image 
+            src={avatar} 
+            alt={`${name}&#39;s avatar`}  
+            width={96} 
+            height={96} 
+            className="rounded-full mt-2 mx-auto"
+          />
+          <figcaption className="sr-only">User&apos;s uploaded avatar</figcaption> 
         </figure>
       </div>
     );
 }
+
