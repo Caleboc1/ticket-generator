@@ -12,12 +12,13 @@ export default function Form({ onSubmit }: TicketFormProps) {
   const [email, setEmail] = useState("");
   const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   // Cloudinary Upload Handler
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
-      alert("No file selected!");
+      setUploadError("No file selected!");
       return;
     }
 
@@ -25,11 +26,12 @@ export default function Form({ onSubmit }: TicketFormProps) {
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
     if (!uploadPreset || !cloudName) {
-      alert("Cloudinary settings are missing. Check your .env.local file.");
+      setUploadError("Cloudinary settings are missing. Check your .env.local file.");
       return;
     }
 
     setLoading(true);
+    setUploadError("");
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", uploadPreset);
@@ -42,11 +44,12 @@ export default function Form({ onSubmit }: TicketFormProps) {
 
       const data = await response.json();
       if (data.secure_url) {
-        setAvatar(data.secure_url); // Store uploaded image URL
+        setAvatar(data.secure_url);
       } else {
-        alert("Image upload failed. Try again.");
+        setUploadError("Image upload failed. Try again.");
       }
     } catch (error) {
+      setUploadError("Upload failed. Please try again.");
       console.error("Upload failed:", error);
     } finally {
       setLoading(false);
@@ -55,8 +58,6 @@ export default function Form({ onSubmit }: TicketFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ name, email, avatar }); // Debugging
-
     if (!name.trim() || !email.trim() || !avatar.trim()) {
       alert("Please fill all fields and upload an avatar.");
       return;
@@ -65,15 +66,21 @@ export default function Form({ onSubmit }: TicketFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 bg-white p-6 shadow-lg rounded-lg">
-      <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required className="border p-2 rounded" />
-      <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} required className="border p-2 rounded" />
-
-      {/* Avatar Upload */}
-      <input type="file" accept="image/*" onChange={handleImageUpload} className="border p-2 rounded" />
-      {loading ? <p>Uploading...</p> : avatar && <Image src={avatar} alt="Avatar Preview" className="w-24 h-24 rounded-full mt-2" />}
-
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 bg-white p-6 shadow-lg rounded-lg max-w-md mx-auto">
+      <label htmlFor="name" className="sr-only">Full Name</label>
+      <input id="name" type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required className="border p-2 rounded" />
+      
+      <label htmlFor="email" className="sr-only">Email Address</label>
+      <input id="email" type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} required className="border p-2 rounded" />
+      
+      <label htmlFor="avatar-upload" className="sr-only">Upload Avatar</label>
+      <input id="avatar-upload" type="file" accept="image/*" onChange={handleImageUpload} className="border p-2 rounded" />
+      
+      {loading && <p aria-live="polite">Uploading...</p>}
+      {uploadError && <p className="text-red-500" aria-live="polite">{uploadError}</p>}
+      {avatar && <Image src={avatar} alt="Avatar Preview" width={96} height={96} className="w-24 h-24 rounded-full mt-2 mx-auto" />}
+      
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
         Generate Ticket
       </button>
     </form>
